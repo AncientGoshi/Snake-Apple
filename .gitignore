@@ -1,1 +1,4 @@
 /high-score.json
+.DS_Store
+/__pycache__
+.idea/**
