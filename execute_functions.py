@@ -32,8 +32,6 @@ def setup():
 
     high_score = json_read()
 
-setup()
-
 def process_input():
     for game_event in pygame.event.get():
         if game_event.type == QUIT:
@@ -105,13 +103,18 @@ def play_mode_update():
     score_font.render_to(screen, (260, 3), f"Score: {score}", pygame.Color("white"))
     score_font.render_to(screen, (260, 40), f"High Score: {high_score}", pygame.Color("white"))
 
+def run_game():
+    setup()
 
-while True:
-    clock.tick(50)
+    while True:
+        clock.tick(50)
 
-    if game_over:
-        game_over_update()
-    else:
-        play_mode_update()
+        if game_over:
+            game_over_update()
+        else:
+            play_mode_update()
 
-    pygame.display.flip()
+        pygame.display.flip()
+
+if __name__ == "__main__":
+    run_game()
