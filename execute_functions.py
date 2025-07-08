@@ -26,7 +26,6 @@ def setup():
 
     game_over = False
     snake_init()
-
     score = 0
     high_score = 0
 
@@ -85,7 +84,7 @@ def play_mode_update():
     game_over = snake_check_walls(THE_WALLS)
 
     snake_rect = snake_get_rect()
-    tail_rect = snake_tail_get_rect()
+    tail_rect =snake_tail_get_rect()
 
     apple_rect = pygame.Rect(apple_x, apple_y, 20, 20)
 
@@ -93,6 +92,7 @@ def play_mode_update():
         score += 1
         high_score_change()
         import_to_json(high_score)
+        snake_tail_draw(screen)
         apple_x = random.randint(0, 620)
         apple_y = random.randint(0, 460)
 
