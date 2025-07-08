@@ -84,7 +84,6 @@ def play_mode_update():
     game_over = snake_check_walls(THE_WALLS)
 
     snake_rect = snake_get_rect()
-    tail_rect =snake_tail_get_rect()
 
     apple_rect = pygame.Rect(apple_x, apple_y, 20, 20)
 
@@ -99,7 +98,8 @@ def play_mode_update():
     screen.fill(pygame.Color("dark blue"))
     pygame.draw.rect(screen, pygame.Color("green"), snake_rect)
     pygame.draw.rect(screen, pygame.Color("red"), apple_rect)
-    pygame.draw.rect(screen, pygame.Color("yellow"), tail_rect)
+
+    snake_tail_draw(screen)
     score_font.render_to(screen, (260, 3), f"Score: {score}", pygame.Color("white"))
     score_font.render_to(screen, (260, 40), f"High Score: {high_score}", pygame.Color("white"))
 
