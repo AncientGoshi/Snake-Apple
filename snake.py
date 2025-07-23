@@ -50,6 +50,10 @@ def tail_update():
     del tail_coordinates[0]
     tail_coordinates.append((snake_x, snake_y))
 
+def snake_tail_add(screen):
+    global snake_x, snake_y
+    snake_draw_tail(screen, snake_x, snake_y)
+
 def snake_draw_tail(screen, tail_x, tail_y):
     tail_rect = pygame.Rect(tail_x, tail_y, snake_size, snake_size)
     pygame.draw.rect(screen, pygame.Color("yellow"), tail_rect)
