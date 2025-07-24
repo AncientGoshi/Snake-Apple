@@ -1,4 +1,5 @@
 import sys
+import threading
 import random
 import pygame.freetype
 from pygame.locals import *
@@ -91,6 +92,7 @@ def play_mode_update():
         score += 1
         high_score_change()
         import_to_json(high_score)
+        snake_tail_add()
         snake_tail_draw(screen)
         apple_x = random.randint(0, 620)
         apple_y = random.randint(0, 460)
