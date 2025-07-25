@@ -1,5 +1,4 @@
 import sys
-import threading
 import random
 import pygame.freetype
 from pygame.locals import *
@@ -60,7 +59,6 @@ def game_over_update():
     global game_over, score
 
     process_input()
-
     if any(pygame.key.get_pressed()):
         snake_init()
         game_over = False
@@ -80,20 +78,22 @@ def play_mode_update():
     if snake_steps >= 8:
         snake_move()
         snake_steps = 0
+        game_over = snake_check_walls(THE_WALLS)
+
+        if snake_get_hit_tail():
+            game_over = True
+            return
+
     snake_steps += 1
 
-    game_over = snake_check_walls(THE_WALLS)
-
     snake_rect = snake_get_rect()
-
-    apple_rect = pygame.Rect(apple_x, apple_y, 20, 20)
+    apple_rect = pygame.Rect(apple_x, apple_y, snake_size, snake_size)
 
     if check_rects_collision(snake_rect, apple_rect):
         score += 1
         high_score_change()
         import_to_json(high_score)
         snake_tail_add()
-        snake_tail_draw(screen)
         apple_x = random.randint(0, 620)
         apple_y = random.randint(0, 460)
 
