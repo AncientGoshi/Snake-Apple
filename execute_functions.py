@@ -8,9 +8,12 @@ from snake import *
 from rect_helpers import *
 
 global screen, clock, score_font, game_over_font, apple_x, apple_y, THE_WALLS, score, high_score, game_over
+global snake_object
 
 def setup():
     global screen, clock, score_font, game_over_font, apple_x, apple_y, THE_WALLS, score, high_score, game_over
+    global snake_object
+
     pygame.init()
     screen = pygame.display.set_mode([640, 480])
     pygame.display.set_caption("Snake")
@@ -25,7 +28,9 @@ def setup():
     THE_WALLS = 0, 620, 0, 460
 
     game_over = False
-    snake_init()
+
+    snake_object = Snake()
+
     score = 0
     high_score = 0
 
@@ -60,7 +65,7 @@ def game_over_update():
 
     process_input()
     if any(pygame.key.get_pressed()):
-        snake_init()
+        snake_object.init()
         game_over = False
         score = 0
 
@@ -73,35 +78,35 @@ def play_mode_update():
     global apple_x, apple_y, score, game_over, snake_steps
 
     new_direction = process_input()
-    snake_set_direction(new_direction)
+    snake_object.set_direction(new_direction)
 
     if snake_steps >= 8:
-        snake_move()
+        snake_object.move()
         snake_steps = 0
-        game_over = snake_check_walls(THE_WALLS)
+        game_over = snake_object.check_walls(THE_WALLS)
 
-        if snake_get_hit_tail():
+        if snake_object.get_hit_tail():
             game_over = True
             return
 
     snake_steps += 1
 
-    snake_rect = snake_get_rect()
+    snake_rect = snake_object.get_rect()
     apple_rect = pygame.Rect(apple_x, apple_y, snake_size, snake_size)
 
     if check_rects_collision(snake_rect, apple_rect):
         score += 1
         high_score_change()
         import_to_json(high_score)
-        snake_tail_add()
+        snake_object.tail_add()
         apple_x = random.randint(0, 620)
         apple_y = random.randint(0, 460)
 
     screen.fill(pygame.Color("dark blue"))
-    pygame.draw.rect(screen, pygame.Color("green"), snake_rect)
     pygame.draw.rect(screen, pygame.Color("red"), apple_rect)
 
-    snake_tail_draw(screen)
+    snake_object.draw(screen)
+
     score_font.render_to(screen, (260, 3), f"Score: {score}", pygame.Color("white"))
     score_font.render_to(screen, (260, 40), f"High Score: {high_score}", pygame.Color("white"))
 
