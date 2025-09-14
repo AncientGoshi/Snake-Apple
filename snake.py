@@ -1,5 +1,4 @@
 import pygame
-import rect_helpers
 
 snake_speed = 20
 snake_size = 20
@@ -7,7 +6,7 @@ snake_size = 20
 class Snake:
     x = 0
     y = 0
-    current_direction = 0
+    current_direction = ""
     tail = []
 
     def __init__(self):
@@ -69,7 +68,7 @@ class Snake:
         snake_rect = pygame.Rect(self.x + 1, self.y + 1, snake_size - 2, snake_size - 2)
         for (x, y) in self.tail:
             tail_rect = pygame.Rect(x, y, snake_size, snake_size)
-            tail_collision = rect_helpers.check_rects_collision(tail_rect, snake_rect)
+            tail_collision = snake_rect.colliderect(tail_rect)
             if tail_collision:
                 return True
         return False

@@ -5,7 +5,6 @@ from pygame.locals import *
 
 from json_helpers import *
 from snake import *
-from rect_helpers import *
 
 global screen, clock, score_font, game_over_font, apple_x, apple_y, THE_WALLS, score, high_score, game_over
 global snake_object
@@ -18,7 +17,7 @@ def setup():
     screen = pygame.display.set_mode([640, 480])
     pygame.display.set_caption("Snake")
     clock = pygame.time.Clock()
-
+    
     score_font = pygame.freetype.Font("JetBrainsMono-Regular.ttf", 24)
     game_over_font = pygame.freetype.Font("JetBrainsMono-Regular.ttf", 55)
 
@@ -71,7 +70,6 @@ def game_over_update():
 
     game_over_font.render_to(screen, (180, 180), "Game over", pygame.Color("red"))
 
-
 snake_steps = 0
 
 def play_mode_update():
@@ -94,7 +92,7 @@ def play_mode_update():
     snake_rect = snake_object.get_rect()
     apple_rect = pygame.Rect(apple_x, apple_y, snake_size, snake_size)
 
-    if check_rects_collision(snake_rect, apple_rect):
+    if snake_rect.colliderect(apple_rect):
         score += 1
         high_score_change()
         import_to_json(high_score)
