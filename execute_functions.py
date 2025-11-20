@@ -6,11 +6,11 @@ from pygame.locals import *
 from json_helpers import *
 from snake import *
 
-global screen, clock, score_font, game_over_font, apple_x, apple_y, THE_WALLS, score, high_score, game_state
+global screen, clock, score_font, game_over_font, apple_x, apple_y, THE_WALLS, score, high_score, game_state, menu_selected_option
 global snake_object
 
 def setup():
-    global screen, clock, score_font, game_over_font, apple_x, apple_y, THE_WALLS, score, high_score, game_state
+    global screen, clock, score_font, game_over_font, apple_x, apple_y, THE_WALLS, score, high_score, game_state, menu_selected_option
     global snake_object
 
     pygame.init()
@@ -27,6 +27,7 @@ def setup():
     THE_WALLS = 0, 620, 0, 460
 
     game_state = "MENU"
+    menu_selected_option = 0
 
     snake_object = Snake()
 
@@ -60,7 +61,7 @@ def high_score_change():
         high_score = score
 
 def game_over_update():
-    global game_over, score, high_score, snake_object, apple_x, apple_y
+    global game_state, score, high_score, snake_object, apple_x, apple_y
 
     # 1. Clear the screen
     screen.fill(pygame.Color("dark blue"))
@@ -95,7 +96,7 @@ def game_over_update():
                 pygame.quit()
                 sys.exit()
             if event.key == K_c:
-                game_over = False
+                game_state = "PLAYING"
                 score = 0
                 snake_object.init()
                 apple_x = random.randint(0, 620)
@@ -104,7 +105,7 @@ def game_over_update():
 snake_steps = 0
 
 def play_mode_update():
-    global apple_x, apple_y, score, game_over, snake_steps
+    global apple_x, apple_y, score, game_state, snake_steps
 
     new_direction = process_input()
     snake_object.set_direction(new_direction)
@@ -112,10 +113,8 @@ def play_mode_update():
     if snake_steps >= 8:
         snake_object.move()
         snake_steps = 0
-        game_over = snake_object.check_walls(THE_WALLS)
-
-        if snake_object.get_hit_tail():
-            game_over = True
+        if snake_object.check_walls(THE_WALLS) or snake_object.get_hit_tail():
+            game_state = "GAME_OVER"
             return
 
     snake_steps += 1
@@ -139,16 +138,64 @@ def play_mode_update():
     score_font.render_to(screen, (260, 3), f"Score: {score}", pygame.Color("white"))
     score_font.render_to(screen, (260, 40), f"High Score: {high_score}", pygame.Color("white"))
 
+def menu_update():
+    global game_state, menu_selected_option, score, snake_object, apple_x, apple_y
+
+    # --- Input Handling ---
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == KEYDOWN:
+            if event.key == K_UP:
+                menu_selected_option = (menu_selected_option - 1) % 2
+            elif event.key == K_DOWN:
+                menu_selected_option = (menu_selected_option + 1) % 2
+            elif event.key == K_RETURN:
+                if menu_selected_option == 0:  # Start Game
+                    game_state = "PLAYING"
+                    # Reset game state for a new game
+                    score = 0
+                    snake_object.init()
+                    apple_x = random.randint(0, 620)
+                    apple_y = random.randint(0, 460)
+                elif menu_selected_option == 1:  # Quit
+                    pygame.quit()
+                    sys.exit()
+
+    # --- Drawing ---
+    screen.fill(pygame.Color("dark blue"))
+
+    # Title
+    title_rect = game_over_font.get_rect("SNAKE")
+    title_rect.center = (320, 150)
+    game_over_font.render_to(screen, title_rect, "SNAKE", pygame.Color("green"))
+
+    # Menu Options
+    start_color = pygame.Color("yellow") if menu_selected_option == 0 else pygame.Color("white")
+    quit_color = pygame.Color("yellow") if menu_selected_option == 1 else pygame.Color("white")
+
+    start_rect = score_font.get_rect("Start Game")
+    start_rect.center = (320, 280)
+    score_font.render_to(screen, start_rect, "Start Game", start_color)
+
+    quit_rect = score_font.get_rect("Quit")
+    quit_rect.center = (320, 330)
+    score_font.render_to(screen, quit_rect, "Quit", quit_color)
+
+
 def run_game():
     setup()
 
     while True:
         clock.tick(50)
 
-        if game_over:
-            game_over_update()
-        else:
+        if game_state == "MENU":
+            menu_update()
+        elif game_state == "PLAYING":
             play_mode_update()
+        elif game_state == "GAME_OVER":
+            game_over_update()
 
         pygame.display.flip()
 
