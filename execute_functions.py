@@ -6,11 +6,11 @@ from pygame.locals import *
 from json_helpers import *
 from snake import *
 
-global screen, clock, score_font, game_over_font, apple_x, apple_y, THE_WALLS, score, high_score, game_over
+global screen, clock, score_font, game_over_font, apple_x, apple_y, THE_WALLS, score, high_score, game_state
 global snake_object
 
 def setup():
-    global screen, clock, score_font, game_over_font, apple_x, apple_y, THE_WALLS, score, high_score, game_over
+    global screen, clock, score_font, game_over_font, apple_x, apple_y, THE_WALLS, score, high_score, game_state
     global snake_object
 
     pygame.init()
@@ -26,7 +26,7 @@ def setup():
 
     THE_WALLS = 0, 620, 0, 460
 
-    game_over = False
+    game_state = "MENU"
 
     snake_object = Snake()
 
@@ -60,15 +60,46 @@ def high_score_change():
         high_score = score
 
 def game_over_update():
-    global game_over, score
+    global game_over, score, high_score, snake_object, apple_x, apple_y
 
-    process_input()
-    if any(pygame.key.get_pressed()):
-        snake_object.init()
-        game_over = False
-        score = 0
+    # 1. Clear the screen
+    screen.fill(pygame.Color("dark blue"))
 
-    game_over_font.render_to(screen, (180, 180), "Game over", pygame.Color("red"))
+    # 2. Display text
+    game_over_rect = game_over_font.get_rect("Game Over")
+    game_over_rect.center = (320, 180)
+    game_over_font.render_to(screen, game_over_rect, "Game Over", pygame.Color("red"))
+
+    score_text = f"Your Score: {score}"
+    score_rect = score_font.get_rect(score_text)
+    score_rect.center = (320, 250)
+    score_font.render_to(screen, score_rect, score_text, pygame.Color("white"))
+
+    high_score_text = f"High Score: {high_score}"
+    high_score_rect = score_font.get_rect(high_score_text)
+    high_score_rect.center = (320, 290)
+    score_font.render_to(screen, high_score_rect, high_score_text, pygame.Color("white"))
+
+    instructions_text = "Press C to Play Again or Q to Quit"
+    instructions_rect = score_font.get_rect(instructions_text)
+    instructions_rect.center = (320, 350)
+    score_font.render_to(screen, instructions_rect, instructions_text, pygame.Color("yellow"))
+
+    # 3. Handle specific input
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == KEYDOWN:
+            if event.key == K_q:
+                pygame.quit()
+                sys.exit()
+            if event.key == K_c:
+                game_over = False
+                score = 0
+                snake_object.init()
+                apple_x = random.randint(0, 620)
+                apple_y = random.randint(0, 460)
 
 snake_steps = 0
 

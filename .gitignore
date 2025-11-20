@@ -2,3 +2,7 @@
 /__pycache__
 .idea/**
 ./high-score.json
+.aider*
+
+.gemini/
+gha-creds-*.json
